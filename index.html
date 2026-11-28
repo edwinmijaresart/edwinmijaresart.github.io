@@ -250,6 +250,8 @@
 		.responsive-logo img.brand-logo { width: 200px; max-width: 100%; height: auto; }
 		/* Portafolio: columnas por tipo de fotografía (sin iconos, texto más abajo) */
 		html { scroll-behavior: smooth; }
+		html, body { overflow-x: hidden; overflow-x: clip; max-width: 100%; }
+		.wrapper, #sobre-mi { overflow-x: hidden; }
 		.services-section .portfolio-col {
 			display: flex;
 			flex-direction: column;
@@ -535,6 +537,18 @@
 		#portafolio .pf-prev { right: calc(5vw + 100px) !important; }
 		/* Galardonadas y prensa */
 		#galardonadas, #exposiciones, #prensa { padding: 90px 0; }
+		/* Transición fluida entre Prensa y Contacto: funde el fondo de Prensa hacia el tono base de Contacto (#1b1b27) */
+		#prensa { position: relative; isolation: isolate; overflow: hidden; padding-bottom: 130px; }
+		#prensa > .container { position: relative; z-index: 2; }
+		#prensa::after {
+			content: "";
+			position: absolute;
+			left: 0; right: 0; bottom: 0;
+			height: 180px;
+			z-index: 1;
+			pointer-events: none;
+			background: linear-gradient(to bottom, rgba(27,27,39,0) 0%, rgba(27,27,39,.03) 14%, rgba(27,27,39,.15) 29%, rgba(27,27,39,.34) 43%, rgba(27,27,39,.57) 57%, rgba(27,27,39,.79) 71%, rgba(27,27,39,.94) 86%, #1b1b27 100%);
+		}
 		.ph-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 34px; }
 		.ph-card { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.09); overflow: hidden; transition: border-color .4s; }
 		.ph-card:hover { border-color: rgba(233,196,106,.6); }
@@ -548,7 +562,7 @@
 		.ph-title { font-family: "Poppins", sans-serif; font-weight: 600; font-size: 19px; line-height: 1.3; color: #fff; margin: 0 0 8px; }
 		.ph-text { font-size: 16px; line-height: 1.6; color: #c4c9d6; margin: 0; }
 		/* Contacto (footer): foto a pantalla completa con sujetos centrados a la derecha y degradado a gris oscuro */
-		#contacto { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background: #1b1b27 !important; }
+		#contacto { position: relative; margin-top: -1px; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background: #1b1b27 !important; }
 		#contacto::before, #contacto::after,
 		#contacto .top-footer::before, #contacto .top-footer::after { display: none !important; content: none !important; background: none !important; }
 		#contacto > .container { position: relative; z-index: 2; width: 100%; margin-top: auto; }
@@ -564,7 +578,7 @@
 			background:
 				linear-gradient(90deg, #1b1b27 0%, #1b1b27 36%, rgba(27,27,39,.92) 48%, rgba(27,27,39,.56) 60%, rgba(27,27,39,.16) 74%, rgba(27,27,39,.04) 100%),
 				linear-gradient(to top, rgba(27,27,39,.94) 0%, rgba(27,27,39,.68) 18%, rgba(27,27,39,0) 36%),
-				linear-gradient(to bottom, #1a1d26 0%, rgba(26,29,38,.78) 6%, rgba(27,27,39,.28) 14%, rgba(27,27,39,0) 24%);
+				linear-gradient(to bottom, #1b1b27 0%, rgba(27,27,39,.95) 4%, rgba(27,27,39,.82) 8%, rgba(27,27,39,.63) 12%, rgba(27,27,39,.42) 16%, rgba(27,27,39,.23) 20%, rgba(27,27,39,.09) 24%, rgba(27,27,39,.02) 28%, rgba(27,27,39,0) 32%);
 		}
 		#contacto .tp-contact h1, #contacto .tp-contact p, #contacto .bottom-footer { text-shadow: 0 2px 14px rgba(15,16,24,.75); }
 		#contacto .tp-contact .title-hd h1 { text-transform: none !important; }
@@ -605,7 +619,7 @@
 			}
 			#contacto .ct-bg-fade {
 				background:
-					linear-gradient(to bottom, #1a1d26 0%, rgba(26,29,38,.45) 4%, rgba(26,29,38,0) 11%),
+					linear-gradient(to bottom, #1b1b27 0%, rgba(27,27,39,.95) 2.5%, rgba(27,27,39,.82) 5%, rgba(27,27,39,.63) 7.5%, rgba(27,27,39,.42) 10%, rgba(27,27,39,.23) 12.5%, rgba(27,27,39,.09) 15%, rgba(27,27,39,.02) 17.5%, rgba(27,27,39,0) 20%),
 					linear-gradient(to top, #12141e 0%, rgba(18,20,30,.95) 24%, rgba(18,20,30,.86) 42%, rgba(18,20,30,.68) 51%, rgba(18,20,30,.28) 60%, rgba(18,20,30,0) 68%);
 			}
 		}
@@ -945,7 +959,7 @@
 				float: none !important;
 				margin: 0 !important;
 				padding: 4px 0 0 0 !important;
-				transform: scale(0.82);
+				scale: 0.82;
 				transform-origin: left center;
 			}
 			.main-banner .play-video-div .poly1 {
@@ -1183,6 +1197,12 @@
 			#exposiciones,
 			#prensa {
 				padding: 48px 0 38px !important;
+			}
+			#prensa {
+				padding-bottom: 72px !important;
+			}
+			#prensa::after {
+				height: 120px;
 			}
 			#exposiciones .title-hd,
 			#prensa .title-hd {
@@ -1949,7 +1969,7 @@
 		function layout(first) {
 			var W = rail.clientWidth, H = rail.clientHeight;
 			if (!W || !H) return;
-			var isMobile = window.innerWidth <= 767;
+			var isMobile = W <= 767 || (window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
 			var gap = isMobile ? 12 : G;
 			var cw = isMobile ? Math.min(H * 0.96 * 2 / 3, W * 0.84) : Math.min(H * 0.96 * 2 / 3, W * 0.26);
 			frames.forEach(function (f, i) {
@@ -1969,9 +1989,28 @@
 			});
 		}
 		function go(k) { cur = ((k % n) + n) % n; layout(false); }
+		function relayout() { layout(true); }
 		layout(true);
-		window.addEventListener('load', function () { layout(true); });
-		window.addEventListener('resize', function () { layout(true); });
+		requestAnimationFrame(relayout);
+		window.addEventListener('load', function () {
+			relayout();
+			setTimeout(relayout, 150);
+			setTimeout(relayout, 500);
+		});
+		window.addEventListener('pageshow', relayout);
+		window.addEventListener('resize', relayout);
+		window.addEventListener('orientationchange', function () { setTimeout(relayout, 120); });
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
+		if ('ResizeObserver' in window) {
+			var ro = new ResizeObserver(function () { relayout(); });
+			ro.observe(rail);
+		}
+		if ('IntersectionObserver' in window) {
+			var pio = new IntersectionObserver(function (entries) {
+				entries.forEach(function (en) { if (en.isIntersecting) relayout(); });
+			}, { threshold: 0.05 });
+			pio.observe(rail);
+		}
 		frames.forEach(function (f, i) {
 			f.addEventListener('click', function (e) { if (i !== cur) { e.preventDefault(); go(i); } });
 		});
@@ -1990,7 +2029,7 @@
 	(function () {
 		var root = document.documentElement;
 		function align() {
-			if (window.innerWidth <= 767) {
+			if ((window.matchMedia && window.matchMedia('(max-width: 767px)').matches) || document.documentElement.clientWidth <= 767 || window.innerWidth <= 767) {
 				root.style.setProperty('--hero-shift', '0px');
 				return;
 			}
@@ -2045,7 +2084,7 @@
 		function place() {
 			var items = findArrows();
 			if (!items.length) return;
-			if (window.innerWidth <= 767) {
+			if ((window.matchMedia && window.matchMedia('(max-width: 767px)').matches) || document.documentElement.clientWidth <= 767 || window.innerWidth <= 767) {
 				items.forEach(function (el) { el.style.translate = ''; });
 				return;
 			}
@@ -2682,7 +2721,12 @@
 				if (b.fecha) return 1;
 				return a._i - b._i;
 			});
-			function cols() { var w = window.innerWidth; return w >= 1100 ? 3 : 2; }
+			function cols() {
+				var gw = grid.clientWidth;
+				if (gw && gw < 900) return 2;
+				if (window.matchMedia) return window.matchMedia('(min-width: 1100px)').matches ? 3 : 2;
+				return (document.documentElement.clientWidth || window.innerWidth) >= 1100 ? 3 : 2;
+			}
 			function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
 			// Sello de galardón con laureles (como en los carteles de películas)
 			function fit(t, base, max) { var w = t.length * base * 0.68; return w > max ? { fs: base, len: max } : { fs: base, len: 0 }; }
@@ -2754,7 +2798,14 @@
 				[].slice.call(chips.querySelectorAll('.mt-chip')).forEach(function (x) { x.classList.toggle('active', x === b); });
 				render();
 			});
-			var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { if (cols() !== ncols) render(); }, 150); });
+			var t;
+			function checkCols() { clearTimeout(t); t = setTimeout(function () { if (cols() !== ncols) render(); }, 150); }
+			window.addEventListener('resize', checkCols);
+			window.addEventListener('load', function () { if (cols() !== ncols) render(); });
+			if ('ResizeObserver' in window) {
+				var mro = new ResizeObserver(checkCols);
+				mro.observe(grid);
+			}
 			render();
 			// Dibuja los mismos distintivos de laureles en Fotografías galardonadas
 			[].slice.call(document.querySelectorAll('#galardonadas .ph-laurels[data-laurels]')).forEach(function (box) {
